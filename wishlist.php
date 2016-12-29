@@ -48,12 +48,26 @@ if(isset($_GET['tag'])) $affiliate_tag = $_GET['tag'];
 else $affiliate_tag = '';
 
 $baseurl = 'http://www.amazon.' . $amazon_country;
-$content = phpQuery::newDocumentFile("$baseurl/registry/wishlist/$amazon_id?$reveal&$sort&layout=standard");
+//$content = phpQuery::newDocumentFile("$baseurl/registry/wishlist/$amazon_id?$reveal&$sort&layout=standard");
 $i = 0;
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0); 
+curl_setopt($ch, CURLOPT_TIMEOUT, 400); //timeout in seconds
+curl_setopt($ch, CURLOPT_PROXY, '97.77.104.22:80');
+curl_setopt($ch, CURLOPT_HEADER, FALSE);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+curl_setopt($ch, CURLOPT_COOKIESESSION, TRUE);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+curl_setopt($ch, CURLOPT_URL, "$baseurl/registry/wishlist/$amazon_id?");
+$results = curl_exec($ch);  // Execute a cURL request
+curl_close($ch);    // Closing the cURL handle
+echo($results);
 
 if($content == '')
 {
-	echo('ERROR');
+	echo($results);
 	die();
 }
 else
@@ -79,7 +93,7 @@ else
 
 		if($contents == '')
 		{
-			echo('ERROR');
+			echo($results);
 			die();
 		}
 		else
